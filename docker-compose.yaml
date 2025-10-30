@@ -1,5 +1,5 @@
 services:
-  qdrant:
+  qdrant-db:
     image: qdrant/qdrant:latest
     restart: always
     container_name: qdrant
