@@ -4,6 +4,11 @@ uvicorn
 python-multipart
 jinja2
 
+# Security
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+
 # Vector database
 qdrant-client
 

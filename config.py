@@ -22,3 +22,23 @@ class Config:
     UPLOAD_FOLDER = "uploads"
     MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
     ALLOWED_EXTENSIONS = {'.pdf', '.docx', '.txt'}
+    
+    # Security Configuration
+    SECRET_KEY = os.getenv("SECRET_KEY", "your-secret-key-change-this-in-production")
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", 30))
+    
+    # Authentication Configuration
+    ENABLE_AUTH = os.getenv("ENABLE_AUTH", "true").lower() == "true"
+    DEFAULT_USERNAME = os.getenv("DEFAULT_USERNAME", "admin")
+    DEFAULT_PASSWORD = os.getenv("DEFAULT_PASSWORD", "admin123")
+    
+    # Server Configuration
+    HOST = os.getenv("HOST", "0.0.0.0")
+    PORT = int(os.getenv("PORT", 8000))
+    
+    # Cookie Security Configuration
+    COOKIE_SECURE = os.getenv("COOKIE_SECURE", "false").lower() == "true"  # Set to true in production with HTTPS
+    COOKIE_HTTPONLY = os.getenv("COOKIE_HTTPONLY", "true").lower() == "true"
+    COOKIE_SAMESITE = os.getenv("COOKIE_SAMESITE", "lax")  # lax, strict, or none
+    COOKIE_DOMAIN = os.getenv("COOKIE_DOMAIN", None)  # Set domain in production
