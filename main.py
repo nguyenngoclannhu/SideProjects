@@ -202,11 +202,25 @@ async def api_login(login_request: LoginRequest):
     csrf_token = csrf_manager.generate_csrf_token()
     csrf_manager.store_csrf_token(csrf_token, user.username, expires_minutes=Config.ACCESS_TOKEN_EXPIRE_MINUTES)
     
-    return Token(
-        access_token=access_token,
-        token_type="bearer",
-        csrf_token=csrf_token
+    # Create response with token data
+    response = JSONResponse(content={
+        "access_token": access_token,
+        "token_type": "bearer",
+        "csrf_token": csrf_token
+    })
+    
+    # Set secure HttpOnly cookie for browser authentication
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        max_age=Config.ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        httponly=Config.COOKIE_HTTPONLY,
+        secure=Config.COOKIE_SECURE,
+        samesite=Config.COOKIE_SAMESITE,
+        domain=Config.COOKIE_DOMAIN
     )
+    
+    return response
 
 @app.post("/logout")
 async def logout():
@@ -254,6 +268,26 @@ async def get_status():
                 "vector_store": {"collection_info": {"points_count": 0}}
             }
         }
+
+# Chrome DevTools endpoint (to prevent 404 errors)
+@app.get("/.well-known/appspecific/com.chrome.devtools.json")
+async def chrome_devtools():
+    """Handle Chrome DevTools discovery request."""
+    return JSONResponse(
+        content={
+            "type": "node",
+            "description": "RAG Chat System",
+            "devtoolsFrontendUrl": "",
+            "webSocketDebuggerUrl": ""
+        },
+        status_code=200
+    )
+
+# Health check endpoint
+@app.get("/health")
+async def health_check():
+    """Simple health check endpoint."""
+    return {"status": "healthy", "timestamp": datetime.now().isoformat()}
 
 # File upload endpoints
 @app.post("/upload")
