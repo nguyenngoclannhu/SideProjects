@@ -618,6 +618,22 @@ async def list_models():
         logger.error(f"Error listing models: {e}")
         return {"success": False, "models": [], "error": str(e)}
 
+@app.post("/search-documents")
+async def search_documents_only(request: QueryRequest):
+    """Search documents without LLM generation."""
+    try:
+        retrieved_docs = rag_pipeline.vector_store.search_similar_documents(
+            query=request.question,
+            limit=request.num_results
+        )
+        return {
+            "success": True,
+            "retrieved_documents": retrieved_docs,
+            "num_retrieved": len(retrieved_docs)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     
