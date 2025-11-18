@@ -104,12 +104,12 @@ qa_test_cases = []
 file_name = "20251111_Query(Sheet1).csv"
 
 #read csv file
-pd.read_csv(file_name).apply(
+pd.read_csv(file_name, encoding='utf-8').apply(
     lambda row: qa_test_cases.append(
         QATestCases(
             query=row['Query'],
             output=row['Expected Output'],
-            context=row['Conext']
+            context=row['Context']
         )
     ), axis=1
 )
